@@ -18,14 +18,15 @@ List v(mat XtWX, mat XtWz, arma::mat X, colvec W, colvec Z) {
 
 
 /*** R
-
 n=20
+X = cbind(rep(1,n), rnorm(n, mean=0, sd=4))
 XtWX = array(0, dim = c(ncol(X), ncol(X)))
 XtWz = array(0, dim = c(ncol(X), 1))
-X = cbind(rep(1,n), rnorm(n, mean=0, sd=4))
 W = Z = rep(1,n)
-v(XtWX, XtWz, X, W, Z)
-t(X) %*% diag(W) %*% X
-t(X) %*% diag(W) %*% Z
+ss = v(XtWX, XtWz, X, W, Z)
+
+solve(ss$XtWX) %*% ss$XtWz
+solve(t(X) %*% diag(W) %*% X) %*% (t(X) %*% diag(W) %*% Z)
+
 */
 

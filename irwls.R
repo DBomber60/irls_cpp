@@ -45,7 +45,7 @@ irls <- function (f, b, b1, b1inv, b2, init, tol = 1e-6) {
 }
 
 
-# implementation of IRLS where both loops through the design matrix are implemented in C ++
+# Faster IRLS function where both loops through the design matrix are implemented in C ++
 library(Rcpp)
 sourceCpp("suff_stats.cpp")
 sourceCpp("eta_update.cpp")

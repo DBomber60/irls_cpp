@@ -1,6 +1,8 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
 
+// C ++ implementation of sufficient statistics update
+
 using namespace Rcpp;
 using namespace arma;
 

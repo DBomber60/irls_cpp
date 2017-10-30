@@ -5,7 +5,7 @@ using namespace Rcpp;
 using namespace arma;
 
 // [[Rcpp::export]]
-List v(mat XtWX, mat XtWz, arma::mat X, colvec W, colvec Z) {
+List v(mat XtWX, mat XtWz, mat X, colvec W, colvec Z) {
   int n = size(X, 0);
   for(int i=0; i<n; ++i) {
     double w = as_scalar(W.row(i));

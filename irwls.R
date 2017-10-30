@@ -46,6 +46,7 @@ irls <- function (f, b, b1, b1inv, b2, init, tol = 1e-6) {
 
 library(Rcpp)
 sourceCpp("suff_stats.cpp")
+sourceCpp("eta_update.cpp")
 irls_cpp <- function (f, b, b1, b1inv, b2, init, tol = 1e-6) {
   # initialize
   y <- model.response(model.frame(f))
@@ -73,10 +74,13 @@ irls_cpp <- function (f, b, b1, b1inv, b2, init, tol = 1e-6) {
     
     beta = solve(ss$XtWX) %*% ss$XtWz
     
-    eta = array(0, dim = c(nrow(X), 1))
-    for (i in 1:nrow(X)) {
-      eta[i] = X[i,] %*% beta
-    }
+    eta = eta(beta, X) # C ++ implementation of the loop below
+
+    # eta = array(0, dim = c(nrow(X), 1))
+    # for (i in 1:nrow(X)) {
+    #   eta[i] = X[i,] %*% beta
+    # }
+    
     lhood.new <- sum(y * eta - b(eta))
     if (abs((lhood.new - lhood) / lhood) < tol) break # converged?
     lhood <- lhood.new
@@ -96,7 +100,7 @@ poisson.irls.cpp <- function (f, tol = 1e-6)
 
 #################### TEST ####################
 # generate poisson response, two predictors
-n = 200000
+n = 2000
 X = cbind(rep(1,n), rnorm(n, mean=0, sd=4))
 beta_true = c(0.5,1)
 Y = rpois(n=n, lambda = exp(X %*% beta_true))
@@ -104,5 +108,5 @@ Y = rpois(n=n, lambda = exp(X %*% beta_true))
 library(microbenchmark)
 poisson.irls(Y~X-1)
 poisson.irls.cpp(Y~X-1)
-microbenchmark(poisson.irls(Y~X-1), poisson.irls.cpp(Y~X-1))
 summary(glm(Y~X-1, family = poisson))
+microbenchmark(poisson.irls(Y~X-1), poisson.irls.cpp(Y~X-1))
